@@ -106,6 +106,52 @@ class Palette
         $this->darkMutedSwatch = $this->findColorVariation(
             self::TARGET_DARK_LUMA, 0, self::MAX_DARK_LUMA,
             self::TARGET_MUTED_SATURATION, 0, self::MAX_MUTED_SATURATION);
+
+        if ($this->vibrantSwatch === null) {
+            // If we do not have a vibrant color...
+            if ($this->darkVibrantSwatch !== null) {
+                // ...but we do have a dark vibrant, generate the value by modifying the luma
+
+                $newColor = $this->darkVibrantSwatch->getColor()->asHSLColor()
+                    ->withLightness(self::TARGET_NORMAL_LUMA);
+                $this->vibrantSwatch = new Swatch($newColor, 0);
+            }
+        }
+
+        if ($this->darkVibrantSwatch === null) {
+            // If we do not have a dark vibrant color...
+            if ($this->vibrantSwatch !== null) {
+                // ...but we do have a vibrant, generate the value by modifying the luma
+                $newColor = $this->vibrantSwatch->getColor()->asHSLColor()
+                    ->withLightness(self::TARGET_DARK_LUMA);
+                $this->darkVibrantSwatch = new Swatch($newColor, 0);
+            }
+        }
+        
+        if ($this->lightVibrantSwatch === null) {
+            // If we do not have a light vibrant color...
+            if ($this->vibrantSwatch !== null) {
+                // ...but we do have vibrant, generate the value by modifying the luma
+
+                $newColor = $this->vibrantSwatch->getColor()->asHSLColor()
+                    ->withLightness(self::TARGET_LIGHT_LUMA);
+                $this->lightVibrantSwatch = new Swatch($newColor, 0);
+            }
+
+            if ($this->darkVibrantSwatch !== null) {
+
+                $newColor = $this->darkVibrantSwatch->getColor()->asHSLColor()
+                    ->withLightness(self::TARGET_LIGHT_LUMA);
+                $this->lightVibrantSwatch = new Swatch($newColor, 0);
+            }
+
+            if ($this->mutedSwatch !== null) {
+
+                $newColor = $this->mutedSwatch->getColor()->asHSLColor()
+                    ->withLightness(self::TARGET_LIGHT_LUMA);
+                $this->lightVibrantSwatch = new Swatch($newColor, 0);
+            }
+        }
     }
 
     /**
